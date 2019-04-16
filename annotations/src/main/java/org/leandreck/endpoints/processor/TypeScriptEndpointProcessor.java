@@ -110,7 +110,7 @@ public class TypeScriptEndpointProcessor extends AbstractProcessor {
         return true;
     }
 
-    private void processEndpoints(TemplateConfiguration templateConfiguration, final List<TypeElement> endpointElements) {
+    private void processEndpoints(TemplateConfiguration templateConfiguration, final List<TypeElement> endpointElements) throws IOException {
         final Types typeUtils = processingEnv.getTypeUtils();
         final Engine engine = new Engine(templateConfiguration);
         final EndpointNodeFactory factory = new EndpointNodeFactory(templateConfiguration, typeUtils, processingEnv.getElementUtils());

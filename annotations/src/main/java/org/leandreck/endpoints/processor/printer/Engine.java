@@ -15,9 +15,14 @@
  */
 package org.leandreck.endpoints.processor.printer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.FileTemplateLoader;
+import freemarker.cache.MultiTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import org.leandreck.endpoints.processor.config.TemplateConfiguration;
 import org.leandreck.endpoints.processor.model.EndpointNode;
 import org.leandreck.endpoints.processor.model.TypeNode;
@@ -35,7 +40,7 @@ public class Engine {
     private final Configuration freemarkerConfiguration;
     private final TemplateConfiguration templateConfiguration;
 
-    public Engine(TemplateConfiguration configuration) {
+    public Engine(TemplateConfiguration configuration) throws IOException {
         this.templateConfiguration = configuration;
 
         // Create your Configuration instance, and specify if up to what FreeMarker
@@ -47,9 +52,12 @@ public class Engine {
         // a good choice in most applications:
         this.freemarkerConfiguration.setDefaultEncoding("UTF-8");
 
-        // Specify the source where the template files come from. Here I set a
-        // plain directory for it, but non-file-system sources are possible too:
-        this.freemarkerConfiguration.setClassForTemplateLoading(this.getClass(), "/");
+        // Allow loading templates from the classpath (useful for using the default templates) or from
+        // the filesystem (useful for using custom templates)
+        this.freemarkerConfiguration.setTemplateLoader(new MultiTemplateLoader(new TemplateLoader[]{
+                new ClassTemplateLoader(this.getClass(), "/"),
+                new FileTemplateLoader(new File(configuration.getTemplateDirectory()))
+        }));
 
 
         // Sets how errors will appear.

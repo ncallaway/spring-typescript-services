@@ -35,6 +35,8 @@ public class TemplateConfiguration {
 	private final String indexTemplate;
 	private final String interfaceTemplate;
 
+	private final String templateDirectory;
+
 	private final PrintConfiguration globalPrintConfiguration;
 
 	private TemplateConfiguration(final String apiModuleTemplate,
@@ -42,12 +44,14 @@ public class TemplateConfiguration {
 								  final String indexTemplate,
 								  final String interfaceTemplate,
 								  final String endpointTemplate,
+								  final String templateDirectory,
 								  final PrintConfiguration globalPrintConfiguration) {
 		this.apiModuleTemplate = apiModuleTemplate;
 		this.enumerationTemplate = enumerationTemplate;
 		this.indexTemplate = indexTemplate;
 		this.interfaceTemplate = interfaceTemplate;
 		this.endpointTemplate = endpointTemplate;
+		this.templateDirectory = templateDirectory;
 		this.globalPrintConfiguration = globalPrintConfiguration;
 	}
 
@@ -82,6 +86,7 @@ public class TemplateConfiguration {
 				definedValue(annotation.index(), TypeScriptTemplatesConfiguration.DEFAULT_INDEX),
 				definedValue(annotation.interfaces(), TypeScriptTemplatesConfiguration.DEFAULT_INTERFACE),
 				definedValue(annotation.endpoint(), TypeScriptTemplatesConfiguration.DEFAULT_ENDPOINT),
+				definedValue(annotation.templateDirectory(), TypeScriptTemplatesConfiguration.DEFAULT_TEMPLATE_DIRECTORY),
 				new PrintConfiguration(
 					annotation.useSuffixes(),
 					definedValue(annotation.suffixGet(), TypeScriptTemplatesConfiguration.DEFAULT_SUFFIX_GET),
@@ -115,6 +120,8 @@ public class TemplateConfiguration {
 		return apiModuleTemplate;
 	}
 
+	public String getTemplateDirectory() { return templateDirectory; }
+
     public PrintConfiguration getGlobalPrintConfiguration() {
         return globalPrintConfiguration;
     }
@@ -126,6 +133,7 @@ public class TemplateConfiguration {
 				TypeScriptTemplatesConfiguration.DEFAULT_INDEX,
 				TypeScriptTemplatesConfiguration.DEFAULT_INTERFACE,
 				TypeScriptTemplatesConfiguration.DEFAULT_ENDPOINT,
+				TypeScriptTemplatesConfiguration.DEFAULT_TEMPLATE_DIRECTORY,
 				createDefaultPrintConfiguration());
 	}
 

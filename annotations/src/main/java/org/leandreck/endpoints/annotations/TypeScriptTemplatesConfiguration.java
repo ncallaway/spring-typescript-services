@@ -36,6 +36,7 @@ public @interface TypeScriptTemplatesConfiguration {
 	String DEFAULT_INDEX = "/org/leandreck/endpoints/templates/typescript/index.ftl";
 	String DEFAULT_INTERFACE = "/org/leandreck/endpoints/templates/typescript/interface.ftl";
 	String DEFAULT_ENDPOINT = "/org/leandreck/endpoints/templates/typescript/service.ftl";
+	String DEFAULT_TEMPLATE_DIRECTORY = ".";
 
 	boolean DEFAULT_USE_SUFFIXES = true;
 	String DEFAULT_SUFFIX_GET = "Get";
@@ -76,6 +77,12 @@ public @interface TypeScriptTemplatesConfiguration {
 	 * @return By default returns "/org/leandreck/endpoints/templates/typescript/service.ftl"
 	 */
 	String endpoint() default DEFAULT_ENDPOINT;
+
+	/**
+	 * Directory for loading customer freemarker templates.
+	 * @return By default returns "."
+	 */
+	String templateDirectory() default DEFAULT_TEMPLATE_DIRECTORY;
 
     /**
      * Whether generated Methods should have suffixes or not.
