@@ -34,6 +34,7 @@ public class TemplateConfiguration {
 	private final String enumerationTemplate;
 	private final String indexTemplate;
 	private final String interfaceTemplate;
+	private final String serviceConfigTemplate;
 
 	private final String templateDirectory;
 
@@ -44,6 +45,7 @@ public class TemplateConfiguration {
 								  final String indexTemplate,
 								  final String interfaceTemplate,
 								  final String endpointTemplate,
+								  final String serviceConfigTemplate,
 								  final String templateDirectory,
 								  final PrintConfiguration globalPrintConfiguration) {
 		this.apiModuleTemplate = apiModuleTemplate;
@@ -51,6 +53,7 @@ public class TemplateConfiguration {
 		this.indexTemplate = indexTemplate;
 		this.interfaceTemplate = interfaceTemplate;
 		this.endpointTemplate = endpointTemplate;
+		this.serviceConfigTemplate = serviceConfigTemplate;
 		this.templateDirectory = templateDirectory;
 		this.globalPrintConfiguration = globalPrintConfiguration;
 	}
@@ -86,6 +89,7 @@ public class TemplateConfiguration {
 				definedValue(annotation.index(), TypeScriptTemplatesConfiguration.DEFAULT_INDEX),
 				definedValue(annotation.interfaces(), TypeScriptTemplatesConfiguration.DEFAULT_INTERFACE),
 				definedValue(annotation.endpoint(), TypeScriptTemplatesConfiguration.DEFAULT_ENDPOINT),
+				definedValue(annotation.serviceConfig(), TypeScriptTemplatesConfiguration.DEFAULT_SERVICE_CONFIG),
 				definedValue(annotation.templateDirectory(), TypeScriptTemplatesConfiguration.DEFAULT_TEMPLATE_DIRECTORY),
 				new PrintConfiguration(
 					annotation.useSuffixes(),
@@ -120,6 +124,8 @@ public class TemplateConfiguration {
 		return apiModuleTemplate;
 	}
 
+	public String getServiceConfigTemplate() { return serviceConfigTemplate; }
+
 	public String getTemplateDirectory() { return templateDirectory; }
 
     public PrintConfiguration getGlobalPrintConfiguration() {
@@ -133,6 +139,7 @@ public class TemplateConfiguration {
 				TypeScriptTemplatesConfiguration.DEFAULT_INDEX,
 				TypeScriptTemplatesConfiguration.DEFAULT_INTERFACE,
 				TypeScriptTemplatesConfiguration.DEFAULT_ENDPOINT,
+				TypeScriptTemplatesConfiguration.DEFAULT_SERVICE_CONFIG,
 				TypeScriptTemplatesConfiguration.DEFAULT_TEMPLATE_DIRECTORY,
 				createDefaultPrintConfiguration());
 	}

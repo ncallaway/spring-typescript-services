@@ -36,6 +36,7 @@ public @interface TypeScriptTemplatesConfiguration {
 	String DEFAULT_INDEX = "/org/leandreck/endpoints/templates/typescript/index.ftl";
 	String DEFAULT_INTERFACE = "/org/leandreck/endpoints/templates/typescript/interface.ftl";
 	String DEFAULT_ENDPOINT = "/org/leandreck/endpoints/templates/typescript/service.ftl";
+	String DEFAULT_SERVICE_CONFIG = "/org/leandreck/endpoints/templates/typescript/serviceconfig.ftl";
 	String DEFAULT_TEMPLATE_DIRECTORY = ".";
 
 	boolean DEFAULT_USE_SUFFIXES = true;
@@ -71,6 +72,12 @@ public @interface TypeScriptTemplatesConfiguration {
 	 * @return By default returns "/org/leandreck/endpoints/templates/typescript/interface.ftl"
 	 */
 	String interfaces() default DEFAULT_INTERFACE;
+
+	/**
+	 * Template used when generating a TypeScript service config.
+	 * @return By default returns "/org/leandreck/endpoints/templates/typescript/serviceconfig.ftl""
+	 */
+	String serviceConfig() default DEFAULT_INTERFACE;
 
 	/**
 	 * Template used when generating the actual endpoint.
