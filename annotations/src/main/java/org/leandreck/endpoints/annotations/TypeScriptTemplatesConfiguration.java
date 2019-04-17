@@ -38,6 +38,7 @@ public @interface TypeScriptTemplatesConfiguration {
 	String DEFAULT_ENDPOINT = "/org/leandreck/endpoints/templates/typescript/service.ftl";
 	String DEFAULT_SERVICE_CONFIG = "/org/leandreck/endpoints/templates/typescript/serviceconfig.ftl";
 	String DEFAULT_TEMPLATE_DIRECTORY = ".";
+	String DEFAULT_OUTPUT_DIRECTORY = "";
 
 	boolean DEFAULT_USE_SUFFIXES = true;
 	String DEFAULT_SUFFIX_GET = "Get";
@@ -90,6 +91,12 @@ public @interface TypeScriptTemplatesConfiguration {
 	 * @return By default returns "."
 	 */
 	String templateDirectory() default DEFAULT_TEMPLATE_DIRECTORY;
+
+	/**
+	 * Output directory for generated TS files, or empty string to use generated source directory
+	 * @return By default returns ""
+	 */
+	String outputDirectory() default DEFAULT_OUTPUT_DIRECTORY;
 
     /**
      * Whether generated Methods should have suffixes or not.

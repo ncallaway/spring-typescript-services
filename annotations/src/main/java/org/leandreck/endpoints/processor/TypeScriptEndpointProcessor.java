@@ -41,10 +41,8 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Types;
 import javax.tools.StandardLocation;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -120,7 +118,7 @@ public class TypeScriptEndpointProcessor extends AbstractProcessor {
         //endpoint
         for (final TypeElement element : endpointElements) {
             final EndpointNode endpointNode = factory.createEndpointNode(element);
-            try (final Writer out = filer.createResource(StandardLocation.SOURCE_OUTPUT, "", toTSFilename(endpointNode.getServiceName(), ".generated.ts"), element).openWriter()) {
+            try (final Writer out = getOutputWriter(templateConfiguration.getOutputDirectory(), toTSFilename(endpointNode.getServiceName(), ".generated.ts"), element)) {
                 engine.processEndpoint(endpointNode, out);
             } catch (TemplateException tex) {
                 printMessage(element, "Could not process template %s. Cause: %s", endpointNode.getTemplate(), tex.getMessage());
@@ -135,16 +133,16 @@ public class TypeScriptEndpointProcessor extends AbstractProcessor {
         final TypesPackage typesPackage = new TypesPackage(endpointNodes, typeNodes);
 
         //index.ts
-        writeIndexTs(engine, endpointArray, typesPackage);
+        writeIndexTs(templateConfiguration.getOutputDirectory(), engine, endpointArray, typesPackage);
 
         //api.module.ts
-        writeApiModuleTs(engine, endpointArray, typesPackage);
+        writeApiModuleTs(templateConfiguration.getOutputDirectory(), engine, endpointArray, typesPackage);
 
         //Types
-        writeTypeTsFiles(engine, endpointArray, typeNodes);
+        writeTypeTsFiles(templateConfiguration.getOutputDirectory(), engine, endpointArray, typeNodes);
 
         //ServiceConfig
-        writeServiceConfig(engine);
+        writeServiceConfig(templateConfiguration.getOutputDirectory(), engine);
     }
 
     private Set<TypeNode> collectAllTypeNodes(Set<EndpointNode> endpointNodes) {
@@ -156,8 +154,17 @@ public class TypeScriptEndpointProcessor extends AbstractProcessor {
         return new HashSet<>(typeNodeMap.values());
     }
 
-    private void writeServiceConfig(final Engine engine) {
-        try (final Writer out = filer.createResource(StandardLocation.SOURCE_OUTPUT, "", "serviceconfig.ts").openWriter()) {
+    private Writer getOutputWriter(String outputDirectory, String relativeName, Element... originatingElements) throws IOException {
+        if (TypeScriptTemplatesConfiguration.DEFAULT_OUTPUT_DIRECTORY.equals(outputDirectory)) {
+            return filer.createResource(StandardLocation.SOURCE_OUTPUT, "", relativeName, originatingElements).openWriter();
+        } else {
+            new File(outputDirectory).mkdirs();
+            return new PrintWriter(Paths.get(outputDirectory, relativeName).toFile(),"UTF-8");
+        }
+    }
+
+    private void writeServiceConfig(String outputDirectory, final Engine engine) {
+        try (final Writer out = getOutputWriter(outputDirectory,"serviceconfig.ts")) {
             engine.processServiceConfig(out);
         } catch (IOException | TemplateException ioe) {
             printMessage("Could not write serviceconfig.ts. Cause: %s", ioe.getMessage());
@@ -165,9 +172,9 @@ public class TypeScriptEndpointProcessor extends AbstractProcessor {
 
     }
 
-    private void writeTypeTsFiles(Engine engine, TypeElement[] endpointArray, Set<TypeNode> typeNodes) {
+    private void writeTypeTsFiles(String outputDirectory, Engine engine, TypeElement[] endpointArray, Set<TypeNode> typeNodes) {
         for (final TypeNode type : typeNodes) {
-            try (final Writer out = filer.createResource(StandardLocation.SOURCE_OUTPUT, "", toTSFilename(type.getTypeName(), ".model.generated.ts"), endpointArray).openWriter()) {
+            try (final Writer out =  getOutputWriter(outputDirectory, toTSFilename(type.getTypeName(), ".model.generated.ts"), endpointArray)) {
                 engine.processTypeScriptTypeNode(type, out);
             } catch (TemplateException tex) {
                 printMessage("Could not process template %s for TypeNode %s. Cause: %s", type.getTemplate(), type.getTypeName(), tex.getMessage());
@@ -177,8 +184,8 @@ public class TypeScriptEndpointProcessor extends AbstractProcessor {
         }
     }
 
-    private void writeApiModuleTs(Engine engine, TypeElement[] endpointArray, TypesPackage typesPackage) {
-        try (final Writer out = filer.createResource(StandardLocation.SOURCE_OUTPUT, "", "api.module.ts", endpointArray).openWriter()) {
+    private void writeApiModuleTs(String outputDirectory, Engine engine, TypeElement[] endpointArray, TypesPackage typesPackage) {
+        try (final Writer out = getOutputWriter(outputDirectory,"api.module.ts", endpointArray)) {
             engine.processModuleTs(typesPackage, out);
         } catch (TemplateException tex) {
             printMessage("Could not process template api.module.ts. Cause: %s", tex.getMessage());
@@ -187,8 +194,8 @@ public class TypeScriptEndpointProcessor extends AbstractProcessor {
         }
     }
 
-    private void writeIndexTs(Engine engine, TypeElement[] endpointArray, TypesPackage typesPackage) {
-        try (final Writer out = filer.createResource(StandardLocation.SOURCE_OUTPUT, "", "index.ts", endpointArray).openWriter()) {
+    private void writeIndexTs(String outputDirectory, Engine engine, TypeElement[] endpointArray, TypesPackage typesPackage) {
+        try (final Writer out = getOutputWriter(outputDirectory,"index.ts", endpointArray)) {
             engine.processIndexTs(typesPackage, out);
         } catch (TemplateException tex) {
             printMessage("Could not process template index.ts. Cause: %s", tex.getMessage());
@@ -209,7 +216,7 @@ public class TypeScriptEndpointProcessor extends AbstractProcessor {
         return typeName.toLowerCase(Locale.ENGLISH) + suffix;
     }
 
-    void printConfigurationErrors(MultipleConfigurationsFoundException mcfe) {
+    private void printConfigurationErrors(MultipleConfigurationsFoundException mcfe) {
         mcfe.getElementsWithConfiguration().stream()
                 .filter(Objects::nonNull)
                 .forEach(element -> {
