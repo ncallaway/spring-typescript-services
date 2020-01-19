@@ -58,7 +58,7 @@ import static javax.tools.Diagnostic.Kind.ERROR;
 /**
  * Annotation Processor for TypeScript-Annotations.
  */
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
+@SupportedSourceVersion(SourceVersion.RELEASE_11)
 public class TypeScriptEndpointProcessor extends AbstractProcessor {
 
     private Filer filer;
